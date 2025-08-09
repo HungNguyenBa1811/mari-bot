@@ -1,0 +1,41 @@
+name: Daily Mari Posting
+
+on:
+    schedule:
+        - cron: '0 2 * * *' # 9 AM UTC+7 (Vietnam time)
+    workflow_dispatch:
+
+jobs:
+    send:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - run: npm install
+
+            - run: node send-image.js
+              env:
+                  GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+                  GOOGLE_FOLDER_ID: ${{ secrets.GOOGLE_FOLDER_ID }}
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+            - name: Commit and push counter.json update
+            - run: |
+                git config --global user.name "github-actions[bot]"
+                git config --global user.email "github-actions[bot]@users.noreply.github.com"
+                git add counter.json
+                git stash
+                git pull --rebase origin main
+                git stash pop || true
+                git add counter.json
+                git commit -m "feat(add-img): Update counter.json for daily post" || echo "feat(no-img): No changes to commit"
+                git push
+
+              env:
+                  GH_TOKEN: ${{ secrets.GH_TOKEN }}
