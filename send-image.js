@@ -20,7 +20,7 @@ if (fs.existsSync(counterPath)) {
     try {
         const raw_data = fs.readFileSync(counterPath, 'utf-8');
         if (raw_data.length > 0) {
-            const data = JSON.parse(raw_data)
+            const data = JSON.parse(raw_data);
             counter = data;
         }
     } catch {
@@ -56,7 +56,7 @@ async function main() {
     counter.push({ day: dayNumber, filename: pick.name });
     fs.writeFileSync(counterPath, JSON.stringify(counter, null, 2));
 
-    await axios.post(webhookUrl, { content: `Daily Mari posting #${dayNumber}` });
+    await axios.post(webhookUrl, { content: `Weekly Mari posting #${dayNumber}` });
 
     const imgRes = await drive.files.get({ fileId: pick.id, alt: 'media' }, { responseType: 'arraybuffer' });
     const imageData = Buffer.from(imgRes.data, 'binary');
