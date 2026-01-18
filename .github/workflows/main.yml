@@ -2,7 +2,7 @@ name: Daily Mari Posting
 
 on:
     schedule:
-        - cron: '0 13 * * 6'
+        - cron: '5 17 * * *'
     workflow_dispatch:
 
 jobs:
