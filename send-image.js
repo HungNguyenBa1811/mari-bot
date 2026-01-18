@@ -56,7 +56,7 @@ async function main() {
     counter.push({ day: dayNumber, filename: pick.name });
     fs.writeFileSync(counterPath, JSON.stringify(counter, null, 2));
 
-    await axios.post(webhookUrl, { content: `Weekly Mari posting #${dayNumber}` });
+    await axios.post(webhookUrl, { content: `Daily Mari posting #${dayNumber}` });
 
     const imgRes = await drive.files.get({ fileId: pick.id, alt: 'media' }, { responseType: 'arraybuffer' });
     const imageData = Buffer.from(imgRes.data, 'binary');
