@@ -52,14 +52,20 @@ async function main() {
     const pick = unused[Math.floor(Math.random() * unused.length)];
     const dayNumber = counter.length + 118;
 
-    // later when adding a record
+    const imgRes = await drive.files.get({ fileId: pick.id, alt: 'media' }, { responseType: 'arraybuffer' });
+    const imageData = Buffer.from(imgRes.data, 'binary');
+
     counter.push({ day: dayNumber, filename: pick.name });
     fs.writeFileSync(counterPath, JSON.stringify(counter, null, 2));
 
-    await axios.post(webhookUrl, { content: `Daily Mari posting #${dayNumber}` });
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (imageData.length > MAX_FILE_SIZE) {
+        await axios.post(webhookUrl, { content: 'Niggers niggers niggers niggers niggers niggers niggers' });
+        console.log(`Skipped (file too large): ${pick.name}`);
+        return;
+    }
 
-    const imgRes = await drive.files.get({ fileId: pick.id, alt: 'media' }, { responseType: 'arraybuffer' });
-    const imageData = Buffer.from(imgRes.data, 'binary');
+    await axios.post(webhookUrl, { content: `Daily Mari posting #${dayNumber}` });
 
     const form = new FormData();
     form.append('file', imageData, pick.name);
